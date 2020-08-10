@@ -46,7 +46,7 @@ def get_recommendation():
             else:
                 score_movies = list(np.add(np.array(score_movies), np.array(model[ele[0]]) * (ele[1] - 2)))
         similar_movies = list(enumerate(score_movies))
-        high = 50 + len(list_of_movies)
+        high = 48 + len(list_of_movies)
         sorted_similar_movies = sorted(similar_movies, key=lambda x: x[1], reverse=True)[0:high]
         unique_movies = seen(sorted_similar_movies, list_of_movies)
         data = pd.concat([df[df['index'] == x] for x in unique_movies])
