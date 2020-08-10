@@ -1,0 +1,1 @@
+web: python model.py && gunicorn app.main:app

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+      <title>MovieBox</title>
+   </head>
+   <body>
+      <div id="app">
+         <nav class="navbar navbar-dark bg-dark">
+            <a class="navbar-brand" href="#">MovieBox - Movie Recommendation App</a>
+            <div id="search-icon"class="active-cyan-4 mb-4">
+               <input class="form-control" style="position: relative;" type="text" placeholder="Search Movies ......." aria-label="Search" v-model="prefix">
+            </div>
+         </nav>
+         <div class="suggestions" style="display: block; position: absolute;
+            z-index: 50;">
+            <div class="item " v-for="result in results">
+               <img class="thumb" src="https://m.media-amazon.com/images/M/MV5BOTY4YjI2N2MtYmFlMC00ZjcyLTg3YjEtMDQyM2ZjYzQ5YWFkXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_UX182_CR0,0,182,268_AL__QL50.jpg">
+               <div class="info">
+                  <div style="float: left">
+                     <a class="name" >[[result.movie_title]]([[result.title_year]])</a>
+                     <div class="meta" >
+                        <span>IMDb: <span class="imdb">[[result.imdb_score]]</span></span>
+                        <span>  Duration: <span class="imdb">[[result.duration]]</span> min.</span>
+                     </div>
+                     [[result.genres]]
+                  </div>
+                  <div style="float: right">
+                     <star-rating :star-size=20  @rating-selected="addrating($event,result)"></star-rating>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <div align="center" v-if="Object.keys(ratings).length === 0" style="font-size: 25px;margin-top: 171px;font-weight: 500;font-family: monospace;">
+            Welcome to Movie Recommendation App, Search & Rate any movie to get recommendations :)
+         </div>
+         <div style="margin-top: 10px; padding-top: 8px;  padding-left: 16px;width: 100%">
+            <h4 v-if="re_movies && Object.keys(re_movies).length !== 0"> Movies You Liked </h4>
+            <div class="oaHE7b SoZvjb ZvGeOb" v-for="result in ratings" >
+               <div class="eM9u1 ZvGeOb">
+                  <div class="OiP3Db BA0A6c" style="height: 183px; width: 120px;"><img src="https://m.media-amazon.com/images/M/MV5BOTY4YjI2N2MtYmFlMC00ZjcyLTg3YjEtMDQyM2ZjYzQ5YWFkXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_UX182_CR0,0,182,268_AL__QL50.jpg" class="rISBZc" height="183" width="120" :alt="result.movie_title" style="opacity: 1;">
+                  </div>
+                  <div style="position: relative;bottom: 25px;width: 99px;left: 10px;">
+                     <star-rating :star-size="20" :rating="result.rating" :show-rating="false" @rating-selected="addrating($event,result)"></star-rating>
+                  </div>
+               </div>
+               <div class="ANCoQe SoZvjb">
+                  <div class="rysD0c">
+                     <a value="hi">
+                        <div class="FozYP">[[result.movie_title]]</div>
+                     </a>
+                     <div class="cp7THd">
+                        <div class="FozYP">[[result.title_year]] </div>
+                     </div>
+                  </div>
+               </div>
+               <button type="button" class="btn btn-danger" style="    height: 33px;
+                  margin: 5px;
+                  margin-left: 23px;
+                  padding: 5px;
+                  width: 72px;" 
+                  @click="removemovie(result)">Remove</button>
+            </div>
+         </div>
+         <div style="float:left;">
+            <div style="margin-left: 16px;margin-top: 42px;">
+               <h4 v-if="re_movies && Object.keys(re_movies).length !== 0"> Recommendations For You </h4>
+               <div class="oaHE7b SoZvjb ZvGeOb" v-for="result in re_movies" >
+                  <div class="eM9u1 ZvGeOb">
+                     <div class="OiP3Db BA0A6c" style="height: 183px; width: 120px;"><img src="https://m.media-amazon.com/images/M/MV5BOTY4YjI2N2MtYmFlMC00ZjcyLTg3YjEtMDQyM2ZjYzQ5YWFkXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_UX182_CR0,0,182,268_AL__QL50.jpg" class="rISBZc" height="183" width="120" :alt="result.movie_title" style="opacity: 1;">
+                     </div>
+                     <div style="position: relative;bottom: 25px;width: 99px;left: 10px;">
+                        <star-rating :star-size="20"  :show-rating="false" @rating-selected="addrating($event,result)"></star-rating>
+                     </div>
+                  </div>
+                  <div class="ANCoQe SoZvjb">
+                     <div class="rysD0c">
+                        <a value="hi">
+                           <div class="FozYP">[[result.movie_title]]</div>
+                        </a>
+                        <div class="cp7THd">
+                           <div class="FozYP">[[result.title_year]] </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- Footer -->
+      <footer style="background-color: currentColor;"class="page-footer font-small special-color-dark pt-4 fixed-bottom">
+         <!-- Copyright -->
+         <div style="color:white;"class="footer-copyright text-center py-3">© 2020 Copyright: Prakhar Omar
+            <a href="https://github.com/prakhar1965"> github.com/prakhar1965</a>
+         </div>
+         <!-- Copyright -->
+      </footer>
+      <!-- Footer -->
+      <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+      <script src="https://unpkg.com/vue-star-rating/dist/star-rating.min.js"></script>
+   </body>
+   <!-- <script src="https://unpkg.com/vue"></script> -->
+   <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+   <script src= "{{url_for('static', filename='app.js')}}" type="text/javascript"></script>
+</html>
