@@ -1,3 +1,6 @@
 venv/
 *.pkl
 *.swp
+.idea/
+__pycache__/
+.runtime.txt.swp
